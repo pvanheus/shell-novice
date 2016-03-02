@@ -96,7 +96,7 @@ ATOM     13  H           1      -1.183   0.500  -1.412  1.00  0.00</code></pre>
 <p>We still need to edit <code>middle.sh</code> each time we want to adjust the range of lines, though. Let’s fix that by using the special variables <code>$2</code> and <code>$3</code>:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">nano</span> middle.sh</code></pre>
 <pre class="output"><code>head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">bash</span> middle.sh pentane.pdb -20 -5</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">bash</span> middle.sh pentane.pdb 20 5</code></pre>
 <pre class="output"><code>ATOM     14  H           1      -1.259   1.420   0.112  1.00  0.00
 ATOM     15  H           1      -2.608  -0.407   1.130  1.00  0.00
 ATOM     16  H           1      -2.540  -1.303  -0.404  1.00  0.00
@@ -105,7 +105,7 @@ TER      18              1</code></pre>
 <p>This works, but it may take the next person who reads <code>middle.sh</code> a moment to figure out what it does. We can improve our script by adding some <strong>comments</strong> at the top:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">nano</span> middle.sh</code></pre>
 <pre class="output"><code># Select lines from the middle of a file.
-# Usage: middle.sh filename -end_line -num_lines
+# Usage: middle.sh filename end_line num_lines
 head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 <p>A comment starts with a <code>#</code> character and runs to the end of the line. The computer ignores comments, but they’re invaluable for helping people understand and use scripts.</p>
 <p>What if we want to process many files in a single pipeline? For example, if we want to sort our <code>.pdb</code> files by length, we would type:</p>
@@ -180,7 +180,7 @@ done</code></pre>
 <pre><code>head -n $2 $1
 tail -n $3 $1</code></pre>
 <p>While you are in the molecules directory, you type the following command:</p>
-<pre><code>bash script.sh &#39;*.pdb&#39; -1 -1</code></pre>
+<pre><code>bash script.sh &#39;*.pdb&#39; 1 1</code></pre>
 <p>Which of the following outputs would you expect to see?</p>
 <ol style="list-style-type: decimal">
 <li>All of the lines between the first and the last lines of each file ending in <code>*.pdb</code> in the molecules directory</li>

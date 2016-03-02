@@ -21,19 +21,10 @@ and directories (also called "folders"),
 which hold files or other directories.
 
 Several commands are frequently used to create, inspect, rename, and delete files and directories.
-To start exploring them,
-let's open a shell window:
-
-> ## Preparation Magic {.callout}
->
-> If you type the command:
-> `PS1='$ '`
-> into your shell, your window should look like our example in this lesson.  
-> This isn't necessary to follow along (in fact, your prompt may have 
-> other helpful information you want to know about).  This is up to you!  
+To start exploring them, start by logging in to **queue00**.
 
 ~~~ {.bash}
-$
+username@queue00:~$
 ~~~
 
 The dollar sign is a **prompt**, which shows us that the shell is waiting for input;
@@ -93,6 +84,7 @@ $ pwd
 /Users/nelle
 ~~~
 
+<!--
 > ## Home Directory Variation {.callout}
 >
 > The home directory path will look different on different operating systems.
@@ -102,6 +94,7 @@ $ pwd
 > (Note that it may look slightly different for different versions of Windows.)
 > In future examples, we've used Mac output as the default - Linux and Windows 
 > output may differ slightly, but should be generally similar.  
+-->
 
 To understand what a "home directory" is,
 let's have a look at how the file system as a whole is organized.  For the 
@@ -153,15 +146,26 @@ Typically, when you open a new command prompt you will be in
 your home directory to start.  
 
 Now let's learn the command that will let us see the contents of our 
-own filesystem.  We can see what's in our home directory by running `ls`,
+own filesystem. Right now there is nothing much in our home directory, so before
+you run the next command do:
+
+~~~ {.bash}
+$ cd ..
+~~~
+
+Now have a look at what is in this directory by typing `ls`,
 which stands for "listing":
 
 ~~~ {.bash}
 $ ls
 ~~~
 ~~~ {.output}
-Applications Documents    Library      Music        Public
-Desktop      Downloads    Movies       Pictures
+adam        dale           ibrahim    mushal     siaka
+admin       darlington     imogen     naeem      sibaliwe
+adugna      darryn         itumeleng  natasha    simon
+ajayi       dionisio       jacob      natashas   siyabonga
+alan        direko         jamesm     nicki      siyanda
+alecia      dirs.txt       jeanbaka   nico       stack-subscribe
 ~~~
 
 (Again, your results may be slightly different depending on your operating 
@@ -177,12 +181,16 @@ which tells `ls` to add a trailing `/` to the names of directories:
 $ ls -F
 ~~~
 ~~~ {.output}
-Applications/ Documents/    Library/      Music/        Public/
-Desktop/      Downloads/    Movies/       Pictures/
+adam/        dale/           ibrahim/    mushal/     siaka/
+admin/       darlington/     imogen/     naeem/      sibaliwe/
+adugna/      darryn/         itumeleng/  natasha/    simon/
+ajayi/       dionisio/       jacob/      natashas/   siyabonga/
+alan/        direko/         jamesm/     nicki/      siyanda/
+alecia/      dirs.txt*       jeanbaka/   nico/       stack-subscribe/
 ~~~
 
 Here,
-we can see that our home directory contains mostly **sub-directories**.
+we can see that this directory contains mostly **sub-directories**.
 Any names in your output that don't have trailing slashes,
 are plain old **files**.
 And note that there is a space between `ls` and `-F`:
@@ -200,24 +208,25 @@ which doesn't exist.
 > most people use them interchangeably or inconsistently,
 > so we will too.
 
-We can also use `ls` to see the contents of a different directory.  Let's take a 
-look at our `Desktop` directory by running `ls -F Desktop`,
+We can also use `ls` to see the contents of a different directory. By typing `cd ..` earlier we
+left our home directory, but it is still there, named after our username. So if your username
+is `pvh` then your home directory is called `pvh`. Let's take a 
+look at our own home directory by running `ls -F username` (changing username as appropriate),
 i.e.,
-the command `ls` with the **arguments** `-F` and `Desktop`.
+the command `ls` with the **arguments** `-F` and `username`.
 The second argument --- the one *without* a leading dash --- tells `ls` that
 we want a listing of something other than our current working directory:
 
 ~~~ {.bash}
-$ ls -F Desktop
+$ ls -F username
 ~~~
 ~~~ {.output}
 data-shell/
 ~~~
 
-Your output should be a list of all the files and sub-directories on your 
-Desktop, including the `data-shell` directory you downloaded at 
-the start of the lesson.  Take a look at your Desktop to confirm that 
-your output is accurate.  
+Your output should be a list of all the files and sub-directories in your, 
+including the `data-shell` directory you downloaded at 
+the start of the lesson.  
 
 As you may now see, using a bash shell is strongly dependent on the idea that 
 your files are organized in an hierarchical file system.  
@@ -233,7 +242,7 @@ First, we can look at its contents, using the same strategy as before, passing
 a directory name to `ls`: 
 
 ~~~ {.bash}
-$ ls -F Desktop/data-shell
+$ ls -F username/data-shell
 ~~~
 ~~~ {.output}
 creatures/          molecules/          notes.txt           solar.pdf
@@ -244,18 +253,26 @@ Second, we can actually change our location to a different directory, so
 we are no longer located in
 our home directory.  
 
-The command to change locations is `cd` followed by a 
+As we saw before, the command to change locations is `cd` followed by a 
 directory name to change our working directory.
 `cd` stands for "change directory",
 which is a bit misleading:
 the command doesn't change the directory,
-it changes the shell's idea of what directory we are in.
+it changes the shell's idea of what directory we are in. Used without any arguments,
+Without any arguments `cd` changes to our home directory. Let's use that now:
+
+~~~ {.bash}
+$ cd
+$ pwd
+~~~
+~~~ {.output}
+/usr/people/username
+~~~
 
 Let's say we want to move to the `data` directory we saw above.  We can 
 use the following series of commands to get there: 
 
 ~~~ {.bash}
-$ cd Desktop
 $ cd data-shell
 $ cd data
 ~~~
@@ -263,16 +280,16 @@ $ cd data
 These commands will move us from our home directory onto our Desktop, then into 
 the `data-shell` directory, then into the `data` directory.  `cd` doesn't print anything,
 but if we run `pwd` after it, we can see that we are now 
-in `/Users/nelle/Desktop/data-shell/data`.
+in `/usr/people/username/data-shell/data`.
 If we run `ls` without arguments now,
-it lists the contents of `/Users/nelle/Desktop/data-shell/data`,
+it lists the contents of `/usr/people/username/data-shell/data`,
 because that's where we now are:
 
 ~~~ {.bash}
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle/Desktop/data-shell/data
+/usr/people/username/data-shell/data
 ~~~
 ~~~ {.bash}
 $ ls -F
@@ -311,13 +328,13 @@ $ cd ..
 or more succinctly,
 the **parent** of the current directory.
 Sure enough,
-if we run `pwd` after running `cd ..`, we're back in `/Users/nelle/Desktop/data-shell`:
+if we run `pwd` after running `cd ..`, we're back in `/usr/people/username/data-shell`:
 
 ~~~ {.bash}
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle/Desktop/data-shell
+/usr/people/username/data-shell
 ~~~
 
 The special directory `..` doesn't usually show up when we run `ls`.  If we want 
@@ -335,7 +352,7 @@ Desktop/            north-pacific-gyre/ writing/
 
 `-a` stands for "show all";
 it forces `ls` to show us file and directory names that begin with `.`,
-such as `..` (which, if we're in `/Users/nelle`, refers to the `/Users` directory)
+such as `..` (which, if we're in `/usr/people/username`, refers to the `/usr/people` directory)
 As you can see,
 it also displays another special directory that's just called `.`,
 which means "the current working directory".
@@ -356,8 +373,8 @@ but we'll see some uses for it soon.
 > The special names `.` and `..` don't belong to `ls`;
 > they are interpreted the same way by every program.
 > For example,
-> if we are in `/Users/nelle/data`,
-> the command `ls ..` will give us a listing of `/Users/nelle`.
+> if we are in `/usr/people/username/shell-data/data`,
+> the command `ls ..` will give us a listing of `/usr/people/username/data-shell`.
 > When the meanings of the parts are the same no matter how they're combined,
 > programmers say they are **orthogonal**:
 > Orthogonal systems tend to be easier for people to learn
@@ -378,7 +395,7 @@ How can you check what happened?  `pwd` gives us the answer!
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle
+/usr/people/username
 ~~~
 
 It turns out that `cd` without an argument will return you to your home directory, 
@@ -389,7 +406,7 @@ three commands, but we can actually string together the list of directories
 to move to `data` in one step: 
 
 ~~~ {.bash}
-$ cd Desktop/data-shell/data
+$ cd data-shell/data
 ~~~
 
 Check that we've moved to the right place by running `pwd` and `ls -F`.  
@@ -418,10 +435,10 @@ to move to `data-shell`.
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle/Desktop/data-shell/data
+/usr/people/username/data-shell/data
 ~~~
 ~~~ {.bash}
-$ cd /Users/nelle/Desktop/data-shell
+$ cd /usr/people/username/data-shell
 ~~~
 
 Run `pwd` and `ls -F` to ensure that we're in the directory we expect.  
@@ -430,9 +447,9 @@ Run `pwd` and `ls -F` to ensure that we're in the directory we expect.
 >
 > The shell interprets the character `~` (tilde) at the start of a path to
 > mean "the current user's home directory". For example, if Nelle's home
-> directory is `/Users/nelle`, then `~/data` is equivalent to
-> `/Users/nelle/data`. This only works if it is the first character in the
-> path: `here/there/~/elsewhere` is *not* `here/there/Users/nelle/elsewhere`. 
+> directory is `/usr/people/username`, then `~/data` is equivalent to
+> `/usr/people/username/data`. This only works if it is the first character in the
+> path: `here/there/~/elsewhere` is *not* `here/there/usr/people/username/elsewhere`. 
 > 
 > Another shortcut is the `-` (dash) character.  `cd` will translate `-` into
 > *the previous directory I was in*, which is faster than having to remember, 

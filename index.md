@@ -26,17 +26,30 @@ These lessons will start you on a path towards using these resources effectively
 
 > ## Getting ready {.getready}
 >
-> You need to download some files to follow this lesson:
-> 
-> 1. Download [shell-novice-data.zip](./shell-novice-data.zip) and move the file to your Desktop.
-> 2. Unzip/extract the file (ask your instructor if you need help with this step). You should end up with a new folder called data-shell on your Desktop.
-> 3. Open a terminal and type:
+> This lesson will be run on the SANBI computer cluster and you will need to be able to log in there. If you do not know how to do
+> that, take a look at [these instructions](http://docs.wp.sanbi.ac.za/2016/03/01/logging-in-to-the-sanbi-cluster-head-node/). If you see
+> the command line prompt that looks like:
 >
 > ~~~ {.input}
-> $ cd
+> username@queue00:~$
 > ~~~
 >
-> In the lesson, you will find out how to access the data in this folder.  
+> You are ready to proceed. In the examples this prompt is shown as **$** for brevity. Once you are logged into the SANBI computer cluster:
+>
+> 1. Download [shell-novice-data.zip](./shell-novice-data.zip). You can use the **wget** command for this:
+>
+> ~~~ {.input}
+> $ wget https://github.com/pvanheus/shell-novice/raw/gh-pages/shell-novice-data.zip
+> ~~~
+>
+> 2. Unzip/extract the file using the **unzip** command:
+>
+> ~~~ {.input}
+> $ unzip shell-novice-data.zip
+> ~~~
+>
+> This will unpack the data into a directory *data-shell* in your home directory.
+> In the lesson, you will find out how to access the data in this folder.
 
 
 ## Topics

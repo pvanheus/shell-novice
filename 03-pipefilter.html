@@ -159,11 +159,11 @@ $ <span class="kw">wc</span> -l *.txt</code></pre>
  300 NENE01751A.txt</code></pre>
 <p>Whoops: one of the files is 60 lines shorter than the others. When she goes back and checks it, she sees that she did that assay at 8:00 on a Monday morning — someone was probably in using the machine on the weekend, and she forgot to reset it. Before re-running that sample, she checks to see if any files have too much data:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">wc</span> -l *.txt <span class="kw">|</span> <span class="kw">sort</span> -n <span class="kw">|</span> <span class="kw">tail</span> -n 5</code></pre>
-<pre class="output"><code> 300 NENE02040A.txt
- 300 NENE02040B.txt
+<pre class="output"><code> 300 NENE02040B.txt
  300 NENE02040Z.txt
  300 NENE02043A.txt
- 300 NENE02043B.txt</code></pre>
+ 300 NENE02043B.txt
+5082 total</code></pre>
 <p>Those numbers look good — but what’s that ‘Z’ doing there in the third-to-last line? All of her samples should be marked ‘A’ or ‘B’; by convention, her lab uses ‘Z’ to indicate samples with missing information. To find others like it, she does this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> *Z.txt</code></pre>
 <pre class="output"><code>NENE01971Z.txt    NENE02040Z.txt</code></pre>

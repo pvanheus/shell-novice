@@ -42,14 +42,18 @@
 <h2><span class="glyphicon glyphicon-check"></span>Getting ready</h2>
 </div>
 <div class="panel-body">
-<p>You need to download some files to follow this lesson:</p>
+<p>This lesson will be run on the SANBI computer cluster and you will need to be able to log in there. If you do not know how to do that, take a look at <a href="http://docs.wp.sanbi.ac.za/2016/03/01/logging-in-to-the-sanbi-cluster-head-node/">these instructions</a>. If you see the command line prompt that looks like:</p>
+<pre class="input"><code>username@queue00:~$</code></pre>
+<p>You are ready to proceed. In the examples this prompt is shown as <strong>$</strong> for brevity. Once you are logged into the SANBI computer cluster:</p>
 <ol style="list-style-type: decimal">
-<li>Download <a href="./shell-novice-data.zip">shell-novice-data.zip</a> and move the file to your Desktop.</li>
-<li>Unzip/extract the file (ask your instructor if you need help with this step). You should end up with a new folder called data-shell on your Desktop.</li>
-<li>Open a terminal and type:</li>
+<li>Download <a href="./shell-novice-data.zip">shell-novice-data.zip</a>. You can use the <strong>wget</strong> command for this:</li>
 </ol>
-<pre class="input"><code>$ cd</code></pre>
-<p>In the lesson, you will find out how to access the data in this folder.</p>
+<pre class="input"><code>$ wget https://github.com/pvanheus/shell-novice/raw/gh-pages/shell-novice-data.zip</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Unzip/extract the file using the <strong>unzip</strong> command:</li>
+</ol>
+<pre class="input"><code>$ unzip shell-novice-data.zip</code></pre>
+<p>This will unpack the data into a directory <em>data-shell</em> in your home directory. In the lesson, you will find out how to access the data in this folder.</p>
 </div>
 </section>
 <h2 id="topics">Topics</h2>

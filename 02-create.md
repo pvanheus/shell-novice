@@ -20,7 +20,7 @@ and use `ls -F` to see what it contains:
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle/Desktop/data-shell
+/usr/people/username/data-shell
 ~~~
 ~~~ {.bash}
 $ ls -F
