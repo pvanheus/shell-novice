@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: The Unix Shell</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
+          <h2 class="subtitle">Executable scripts and the PATH</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Understand what an executable script is</li>
+<li>Know the elements that make a script executable</li>
+<li>Be able to create an executable script</li>
+<li>Know what an environment variable is</li>
+<li>Know the function of the PATH environment variable</li>
+<li>Be able to set the PATH environment variable</li>
+<li>Be able to make the PATH setting permanent by adding it to .bash_profile</li>
+</ul>
+</div>
+</section>
+<p>In the previous session we created a shell script, a small program that when interpreted by the <code>bash</code> shell ran some commands. We ran the one of the shell scripts with the command:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">bash</span> do-stats.sh *[AB].txt</code></pre>
+</blockquote>
+<p>The limitation of running the script like this is that the script must be in the same directory as the data. Ideally, we’d like to keep our programs, including scripts, in a software collection in a separate directory from where we store our data.</p>
+<p>In addition, we would like to run our script like we run a command. So:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">do-stats.sh</span> *[AB].txt</code></pre>
+</blockquote>
+<p>To achieve this we need the script to be <em>executable</em> and <em>in our PATH</em>.</p>
+<h2 id="executable-scripts-and-interpreters">Executable scripts and interpreters</h2>
+<p>For a script to be able to run as a command we need it to be executable. To understand that, let’s go to the <code>north-pacific-gyre/2012-07-30</code> directory and do a <em>long listing</em>:</p>
+<blockquote>
+<pre class="input"><code>$ ls -l -F | head -n 5</code></pre>
+<pre class="output"><code>total 272
+-rw-r--r-- 1 pvh messagebus   86 Mar  7 14:01 do-stats.sh
+-rw-r--r-- 1 pvh messagebus  184 Nov 17 09:02 goodiff
+-rw-r--r-- 1 pvh messagebus  198 Nov 17 09:02 goostats
+-rw-r--r-- 1 pvh messagebus 4406 Nov 17 09:02 NENE01729A.txt
+...</code></pre>
+</blockquote>
+<p>Notice the <code>-rw-r--r--</code> lines. These specify the <em>permissions</em> associated with those files. The first block is for the owner (<code>rw-</code>, read and write permission) and then for members of the same group as the owner and then for everyone else (in both cases <code>r--</code>, read permissions). Any script that we want to run as a command must have <em>executable</em> permission set and we can do that with the <code>chmod</code> command:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">chmod</span> +x do-stats.sh</code></pre>
+</blockquote>
+<p>Now the long listing shows that the <code>do-stats.sh</code> script file is executable:</p>
+<blockquote>
+<pre class="input"><code>$ ls -l -F | head -n 5</code></pre>
+<pre class="output"><code>total 272
+-rwxr-xr-x 1 pvh messagebus   86 Mar  7 14:01 do-stats.sh
+-rw-r--r-- 1 pvh messagebus  184 Nov 17 09:02 goodiff
+-rw-r--r-- 1 pvh messagebus  198 Nov 17 09:02 goostats
+-rw-r--r-- 1 pvh messagebus 4406 Nov 17 09:02 NENE01729A.txt</code></pre>
+</blockquote>
+<p>This permission setting will allows Linux to run the script as a command, but there is a piece of information missing: how do we want to run the script? When we ran the script previously we told Linux what program we wanted to use to interpret the script:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">bash</span> do-stats.sh *[AB].txt</code></pre>
+</blockquote>
+<p>We told Linux that we wanted the <code>bash</code> program to interpret the <code>do-stats.sh</code> script. If we are going to run it as a command, we need to tell Linux how to interpret the script. We can do this by adding a <em>hash bang</em> line to the top of the script. This is named after the two characters <code>#!</code>. It has to be the very first line of the script:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="kw">for</span> <span class="kw">datafile</span> in <span class="ot">$@</span>
+<span class="kw">do</span>
+  <span class="kw">echo</span> <span class="ot">$datafile</span>
+  <span class="kw">bash</span> goostats <span class="ot">$datafile</span> stats-<span class="ot">$datafile</span>
+<span class="kw">done</span></code></pre>
+</blockquote>
+<p>The path <code>/bin/bash</code> tells Linux which command to use to interpret the script. This has to be an <em>absolute path</em> (i.e. it starts with /). Since we know that <code>bash</code> is the command we want to use to interpret the script, we can find the path to <code>bash</code> with <code>which</code>:</p>
+<blockquote>
+<pre class="input"><code>$ which bash</code></pre>
+<pre class="output"><code>/bin/bash</code></pre>
+</blockquote>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h3><span class="glyphicon glyphicon-pushpin"></span>Which shell? bash and sh</h3>
+</div>
+<div class="panel-body">
+<p>We have been using <code>bash</code> for these lessons because it is the default shell on Linux for most users. There is an older shell called <code>sh</code> (<code>/bin/sh</code>) that <code>bash</code> was based on. Often scripts use <code>#!/bin/sh</code> instead of <code>#!/bin/bash</code> because many of the features of <code>bash</code> are also present in <code>sh</code>.</p>
+<p>This distinction is only really important when you are not running a script in your own environment. For example, if you are running a script on a cluster you might need to use <code>#!/bin/sh</code> depending on the cluster configuration. If you do need to use <code>#!/bin/sh</code> you need to make sure your scripts work with <code>sh</code>. There are some tips on <a href="http://stackoverflow.com/questions/5725296/difference-between-sh-and-bash">stackoverflow</a> but a full discussion of differences is beyond the scope of this lesson.</p>
+</div>
+</aside>
+<p>With the hash bang line in place and the script executable, we can now run it. We need to specify the path to the script though:</p>
+<blockquote>
+<pre class="input"><code>$ ./do-stats.sh *[AB].txt</code></pre>
+</blockquote>
+<p>If the script is not executable we’ll get an error:</p>
+<blockquote>
+<pre class="output"><code>-bash: ./do-stats.sh: Permission denied</code></pre>
+</blockquote>
+<p>If the script is executable but the <em>hash bang</em> line is incorrect we might get a different error:</p>
+<blockquote>
+<pre class="output"><code>-bash: ./do-stats.sh: bash: bad interpreter: No such file or directory</code></pre>
+</blockquote>
+<h2 id="environment-variables-and-the-path">Environment variables and the PATH</h2>
+<p>Now that we have an executable script we would like to be able to keep it in different place to where we keep our data but we still want to be able to run it as a command. To make this happen we have to modify our <code>PATH</code>. The PATH is an <em>environment variable</em>.</p>
+<p>Variables are bindings between names and values. We have seen them before in the context of loops (loop variables) and scripts (variables for script arguments such as <code>$1</code>). While loop and script variables only last for the duration of the loop or script we are running, environment variables keep their values for the whole duration that the shell session we’re in is running.</p>
+<p>The <code>PATH</code> environment variable is used to store the locations that <code>bash</code> searches for commands. Remember that to get to the value of a variable we need to use <code>$</code>. Let’s examine it:</p>
+<blockquote>
+<pre class="input"><code>$ echo $PATH</code></pre>
+<pre class="output"><code>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/people/pvh/.rvm/bin</code></pre>
+</blockquote>
+<p>The value of the <code>PATH</code> environment variable is a colon (‘:’) separated list of directory names. When we type a command name (e.g. <code>ls</code>) in the <code>bash</code> shell, <code>bash</code> will search each of these directories in order until it finds a executable file matching the command name. We can find out where these files are found using <code>which</code>:</p>
+<blockquote>
+<pre class="input"><code>$ which ls</code></pre>
+<pre class="output"><code>/bin/ls</code></pre>
+</blockquote>
+<h2 id="choosing-a-location-for-your-scripts">Choosing a location for your scripts</h2>
+<p>Where you choose to store your scripts has to do with how you intend to use them. Project specific scripts might be stored in a directory associated with the project in question. Scripts which are more generally useful could be stored in a path such as <code>~/bin</code>. Remember, however, that <code>~</code> is a special character interpreted by the <code>bash</code> shell and we might not want to use it in our <code>PATH</code> specific. As a substitute you can use <code>$HOME</code>, the value of the <code>HOME</code> environment variable, which always contains the name of your home directory. So let’s create a directory <code>$HOME/bin</code> to store scripts in.</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">mkdir</span> <span class="ot">$HOME</span>/bin</code></pre>
+</blockquote>
+<p>Now let’s copy the <code>do-stats.sh</code> script to that <code>$HOME/bin</code> directory:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cp</span> -p ~/data-shell/north-pacific-gyre/2012-07-03/do-stats.sh ~/bin</code></pre>
+</blockquote>
+<p>The <code>-p</code> option for <code>cp</code> tells it to preserve the permissions (including the execute permission) when copying the file.</p>
+<p>And now let’s add <code>$HOME/bin</code> to the <code>PATH</code>:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ot">PATH=$PATH</span>:<span class="ot">$HOME</span>/bin</code></pre>
+</blockquote>
+<p>When adding a directory path to <code>PATH</code> we need to include the original value of <code>PATH</code> (<code>$PATH</code>) on the right hand side because we want to add a value, not replace the value of <code>PATH</code>. The new value we are adding (<code>$HOME/bin</code>) and the old value we still want to keep (<code>$PATH</code>) are separated by a colon (<code>:</code>). In this example we are adding <code>$HOME/bin</code> at the end of <code>PATH</code>, which means it will be searched last. If we want it to be searched first we could add it at the start of <code>PATH</code>.</p>
+<p>Now that <code>do-stats.sh</code> is executable, has a correct hash bang line, and is in a directory that is in our <code>PATH</code> we can use it like a command:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cd</span> ~/data-shell/north-pacific-gyre/2012-07-03 
+$ <span class="kw">do-stats.sh</span> *[AB].txt</code></pre>
+</blockquote>
+<p>The <code>PATH</code> setting is only valid for the <code>bash</code> session we are in when we set it. If you want the setting to be inherited by other programs that <code>bash</code> starts you need to <code>export</code> it with:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">export</span> <span class="ot">PATH</span></code></pre>
+</blockquote>
+<h2 id="the-.bash_profile-and-making-settings-permanent">The .bash_profile and making settings permanent</h2>
+<p>The way we have set <code>PATH</code> will allow us to put scripts in <code>$HOME/bin</code>, make them executable and then run them like commands; this will only work for the shell we are in when we set <code>PATH</code>. If we want to make this setting permanent we need to add it to the <code>bash</code> settings file, which we can do by adding the change we want to <code>~/.bash_profile</code>. Edit this with:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">nano</span> ~/.bash_profile</code></pre>
+</blockquote>
+<p>And add the settings you need:</p>
+<blockquote>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">PATH=$PATH</span>:<span class="ot">$HOME</span>/bin
+<span class="kw">export</span> <span class="ot">PATH</span></code></pre>
+</blockquote>
+<p>These settings will now be set every time you log in.</p>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/shell-novice">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+  </body>
+</html>
